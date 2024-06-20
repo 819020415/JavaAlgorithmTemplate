@@ -26,7 +26,7 @@ public class 倍增 {
         }
     }
 
-    //求 u 和 v 的 lca
+   //求 u 和 v 的 lca
     static int lca(int u, int v) {
         if (dep[u] < dep[v]) {//保证 u 的深度大
             int t = u;
@@ -42,9 +42,38 @@ public class 倍增 {
         for (int i = 19; i >= 0; i--) {
             if (fa[i][u] != fa[i][v]) {//保证不跳过
                 u = fa[i][u];
-                v = fa[i][i];
+                v = fa[i][v];
             }
         }
+        return fa[0][u];
+    }
+
+    //求 u 和 v 的距离
+    static int dis(int u, int v) {
+        if (dep[u] < dep[v]) {//保证 u 的深度大
+            int t = u;
+            u = v;
+            v = t;
+        }
+        //先将 u 跳到和 v 同一层
+        int ans = 0;
+        for (int i = 19; i >= 0; i--) {
+            if (dep[fa[i][u]] >= dep[v]) {
+                ans += 1 << i;
+                u = fa[i][u];
+            }
+        }
+        if (u == v) return ans;//v 是 u 的祖先
+        //两个节点一起跳，最后会跳到 lca 的下一层
+        for (int i = 19; i >= 0; i--) {
+            if (fa[i][u] != fa[i][v]) {//保证不跳过
+                u = fa[i][u];
+                v = fa[i][v];
+                ans += 1 << (i + 1);
+            }
+        }
+        return ans + 2;
+    }
         return fa[0][u];
     }
 
