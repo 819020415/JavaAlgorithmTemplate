@@ -34,7 +34,7 @@ public class SegmentTree2 {
         sum = new long[len];
         add = new long[len];
         mul = new long[len];
-        build(1, 0, N - 1);
+        build(1, 0, N - 1, a);
 
     }
 
@@ -43,12 +43,12 @@ public class SegmentTree2 {
         r[u] = ri;
         mul[u] = 1;
         if (le == ri) {
-            a[u] = le;
+            sum[u] = a[le];
             return;
         }
         int mid = le + ri >> 1;
-        build(u << 1, le, mid);
-        build(u << 1 | 1, mid + 1, ri);
+        build(u << 1, le, mid, a);
+        build(u << 1 | 1, mid + 1, ri, a);
         pushUp(u);
     }
 
@@ -58,7 +58,8 @@ public class SegmentTree2 {
         add[u] = (add[u] * m + a) % mod;
     }
 
-    //区间加乘，区间加的时候 mul=1；区间乘的时候 add=0
+    //区间加乘，区间加的时候 mul=1，add = 要加的值
+    //        区间乘的时候 add=0，mul = 要乘的值
     static void update(int u, int le, int ri, int add, int mul) {
         if (le <= l[u] && r[u] <= ri) {
             calc(u, add, mul);
