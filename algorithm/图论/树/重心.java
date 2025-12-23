@@ -1,6 +1,6 @@
 package algorithm.图论.树;
 
-import java.util.*;
+import java.util.List;
 
 public class 重心 {
     /**
@@ -25,7 +25,7 @@ public class 重心 {
      * 然后就可以依据定义找到重心了。
      */
 
-    static int N;
+    static int n;
     static int[] size;//保存以当前节点为根的子树大小
     static int[] weight;//保存节点的所有儿子节点中的最大节点数
     static int[] centroid;//保存重心编号，重心最多两个
@@ -39,8 +39,8 @@ public class 重心 {
             weight[u] = Math.max(weight[u], size[v]);
             size[u] += size[v];
         }
-        weight[u] = Math.max(weight[u], N - size[u]);
-        if (weight[u] <= N / 2) {//根据重心的定义，以树的重心为根时，所有子树的大小都不超过整棵树大小的一半。
+        weight[u] = Math.max(weight[u], n - size[u]);
+        if (weight[u] <= n / 2) {//根据重心的定义，以树的重心为根时，所有子树的大小都不超过整棵树大小的一半。
             if (centroid[0] == 0) centroid[0] = u;
             else centroid[1] = u;
         }
