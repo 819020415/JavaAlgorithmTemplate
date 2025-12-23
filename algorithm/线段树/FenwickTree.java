@@ -1,6 +1,6 @@
 package algorithm.线段树;
 
-import java.util.*;
+import java.util.Scanner;
 
 public class FenwickTree {
     /**
@@ -9,9 +9,6 @@ public class FenwickTree {
      * 空间复杂度 O(N)
      * 查询修改时间复杂度 O(logN)
      */
-
-
-
 
     static int N;
     static int[] s;
@@ -42,8 +39,9 @@ public class FenwickTree {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         N = sc.nextInt();
-        int m = sc.nextInt();
         s = new int[N + 1];
+        int m = sc.nextInt();
+        //数组下标从 1 开始
         for (int i = 1; i <= N; i++) {
             int v = sc.nextInt();
             change(i, v);

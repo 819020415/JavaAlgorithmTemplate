@@ -1,20 +1,21 @@
 package algorithm.线段树;
 
 import java.io.*;
-import java.util.*;
+import java.util.InputMismatchException;
 
 public class MergeTree {
     /**
      * 类似线段树，不过每个节点保存的不是单个值，而是一个排序后的区间
      * 建树的过程和归并排序类似，因此叫做归并树
      *
-     * 可以解决查询 [l,r] 第 k 小的值 的问题，单词查询的时间复杂度为 O(logN ^ 3)
+     * 可以解决查询 [l,r] 第 k 小的值 的问题，单次查询的时间复杂度为 O(logN ^ 3)
      * 每次查询二分第 k 大的值 x。然后进入查询，对于每个区间，如果完全覆盖了，二分获得当前区间小于等于 x 的个数
      * 如果不相交就直接返回 0，否则继续递归子节点
      *
      */
     static class MT {
         int[] a;
+        long[] ps;
         int l, r;
       //  int c1,c2;//逆序对，非逆序对
     //    int lazy;//区间翻转懒标记
@@ -23,10 +24,12 @@ public class MergeTree {
     static int[] build(int u, int l, int r, int[] a) {
         int len = r - l + 1;
         tr[u].a = new int[len];
+        tr[u].ps = new long[len + 1];
         tr[u].l = l;
         tr[u].r = r;
         if (l == r) {
             tr[u].a[0] = a[l];
+            tr[u].ps[1] = a[l];
             return tr[u].a;
         }
         int mid = l + r >> 1;
@@ -39,6 +42,9 @@ public class MergeTree {
         }
         while (p1 < le.length) tr[u].a[p3++] = le[p1++];
         while (p2 < ri.length) tr[u].a[p3++] = ri[p2++];
+        for (int i = 1; i <= len; i++) {
+            tr[u].ps[i] = tr[u].ps[i - 1] + tr[u].a[i - 1];
+        }
         return tr[u].a;
 
     }
@@ -60,6 +66,26 @@ public class MergeTree {
         int sum = 0;
         sum += query(u << 1, l, r, x);
         sum += query(u << 1 | 1, l, r, x);
+        return sum;
+    }
+
+    //求 a[l ~ r] 区间内小于等于 x 的值的和
+    static long querySum(int u, int l, int r, long x) {
+        if (tr[u].l > r || tr[u].r < l) return 0;
+        if (l <= tr[u].l && tr[u].r <= r) {//完全覆盖，二分获得当前区间满足条件的个数
+            int le = 0, ri = tr[u].a.length - 1, ret = -1;
+            while (le <= ri) {
+                int m = le + ri >> 1;
+                if (tr[u].a[m] <= x) {
+                    ret = m;
+                    le = m + 1;
+                } else ri = m - 1;
+            }
+            return tr[u].ps[ret + 1];
+        }
+        long sum = 0;
+        sum += querySum(u << 1, l, r, x);
+        sum += querySum(u << 1 | 1, l, r, x);
         return sum;
     }
 
